@@ -14,12 +14,16 @@ public class Review {
     private Long id;
     private String content;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
     public Review(String content, Movie movie) {
         this.content = content;
         this.movie = movie;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
     }
 }

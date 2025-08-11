@@ -1,4 +1,4 @@
-package org.example.jpa2.service;
+package org.example.jpa.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.jpa.dto.ReviewRequest;
@@ -26,7 +26,7 @@ public class ReviewService {
                 () -> new IllegalArgumentException("그런 movieId의 movie는 없습니다")
         );
         Review review = new Review(
-                request.getContents(),
+                request.getContent(),
                 movie
         );
         Review saveReview = reviewRepository.save(review);
@@ -54,5 +54,34 @@ public class ReviewService {
             );
         }
         return dtos;
+    }
+
+    @Transactional (readOnly = true)
+    public ReviewResponse findOne(Long movieId, Long reviewId) {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(
+                () -> new IllegalArgumentException("그런 movieId의 movie는 없습니다.")
+        );
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new IllegalArgumentException("그런 reviewId의 review는 없습니다")
+        );
+        if (!review.getMovie().getId().equals(movie.getId())) {
+            throw new IllegalArgumentException("해당 movie에 없는 review 입니다.");
+        }
+
+        return new ReviewResponse(review.getId(), review.getContent());
+    }
+
+    @Transactional
+    public ReviewResponse update(Long movieId, Long reviewId, ReviewRequest request) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(
+                () -> new IllegalArgumentException("그런 reviewId의 review는 없습니다")
+        );
+        if (!review.getMovie().getId().equals(movieId)) {
+            throw new IllegalArgumentException("그런 reviewId의 review는 없습니다");
+        }
+
+        review.updateContent(request.getContent());
+        return new ReviewResponse(review.getId(), review.getContent());
     }
 }

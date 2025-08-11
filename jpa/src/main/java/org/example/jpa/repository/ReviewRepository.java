@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<org.example.jpa2.entity.Review> findAllByMovie(Movie movie);
+    List<Review> findAllByMovie(Movie movie);
+
 }
